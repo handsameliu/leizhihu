@@ -32,23 +32,23 @@
 |followNum|关注数|专题下被关注数|
 
 ##### comments  评论or文章
-|字段|含义|
+|字段|含义|备注|
 |:--|:--|:--|
-|_id|id||
-|title|标题||
-|content|内容||
+|_id|d| |
+|title|标题| |
+|content|内容| |
 |subject|所属专题|数组可以存多个，关联subjects|
-|time|发表时间||
+|time|发表时间| |
 |user|发表用户|关联users|
 |isType|文章状态|0正常显示，-1不予显示|
 |isGenre|当前留言的状态是文章还是评论|0评论，1留言|
 |quoteArticle|引用的文章|不关联任何表，只存id，因为评论有可能还有评论|
 |attention|关注度|被关注数|
-|praiseNum|点赞数||
-|lowNum|踩数||
+|praiseNum|点赞数| |
+|lowNum|踩数| |
 
 ##### mySpace	个人空间(每个我操作过的所有文章或跟帖都会有记录)
-|字段|含义||
+|字段|含义|备注|
 |:--|:--|:--|
 |_id|id||
 |user|用户id|关联users|
