@@ -20,6 +20,7 @@ exports.signIn = (req,res) => {
         if (!data) {
             return res.json(message('username && password invalid'));
         }
+        req.session.user = {username:data.username,_id:data._id};
         res.json(message(null,{data},'success'));
     });
 };
