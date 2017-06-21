@@ -14,7 +14,7 @@ exports.findAll = (req,res) => {
         if(!data){
             return message('data is null');
         }
-        return message(null,data,'success');
+        res.json(message(null,data,'success'));
     });
 };
 /**
@@ -29,7 +29,7 @@ exports.findBySubject = (req,res) => {
         if(!data){
             return message('data is null');
         }
-        return message(null,data,'success');
+        res.json(message(null,data,'success'));
     });
 };
 /**
@@ -44,7 +44,7 @@ exports.findArticleById = (req,res) => {
         if(!data){
             return message('data is null');
         }
-        return message(null,data,'success');
+        res.json(message(null,data,'success'));
     });
 };
 /**
