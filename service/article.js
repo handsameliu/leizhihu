@@ -6,8 +6,7 @@ let commentService = db.Comment;
  * 查询所有
  */
 exports.findAll = (req,res) => {
-    let query = req.query;
-    articleService.find({user:query.user}).exec((err,data) => {
+    articleService.find({isStatus:0}).exec((err,data) => {
         if(err){
             return message('params invalid');
         }
@@ -22,7 +21,7 @@ exports.findAll = (req,res) => {
  */
 exports.findBySubject = (req,res) => {
     let query = req.query;
-    articleService.find({subject:query.subject}).exec((err,data) => {
+    articleService.find({subject:query.subject,isStatus:0}).exec((err,data) => {
         if(err){
             return message('params invalid');
         }
@@ -37,7 +36,7 @@ exports.findBySubject = (req,res) => {
  */
 exports.findArticleById = (req,res) => {
     let query = req.query;
-    articleService.findOne({user:query.id}).exec((err,data) => {
+    articleService.findOne({user:query.id,isStatus:0}).exec((err,data) => {
         if(err){
             return message('params invalid');
         }
@@ -52,6 +51,7 @@ exports.findArticleById = (req,res) => {
  */
 exports.saveArticle = (req,res) => {
     let body = req.body;
+    body.user = req.session.user && req.session.user._id;
      if (!body || !(body.title && body.content && body.subject && body.user)) {
         res.json(message('params invalid'));
         return;
@@ -68,7 +68,8 @@ exports.saveArticle = (req,res) => {
  */
 exports.saveComment = (req,res) => {
     let body = req.body;
-     if (!body || !(body.article && body.content && body.user)) {
+    body.user = req.session.user && req.session.user._id;
+    if (!body || !(body.article && body.content && body.user)) {
         res.json(message('params invalid'));
         return;
     }

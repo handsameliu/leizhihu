@@ -21,6 +21,4 @@ const message = (err, result, message) => {
     return msg;
 };
 
-module.exports = () => {
-    return {message};
-};
+exports.message = message;
