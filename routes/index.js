@@ -5,5 +5,5 @@ const api = require('./api_router');
 
 module.exports = function (app) {
     app.use('/', page);
-   app.use('/api', api);
+    app.use('/api', api);
 }

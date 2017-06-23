@@ -1,3 +1,5 @@
+'use strict';
+
 let service = require('../service');
 let article = service.article;
 
@@ -15,4 +17,7 @@ exports.saveArticle = (req,res)=>{
 };
 exports.saveComment = (req,res)=>{
 	article.saveComment(req,res);
+};
+exports.findCommentByArticleId = (req,res)=>{
+	article.findCommentByArticleId(req,res);
 };
