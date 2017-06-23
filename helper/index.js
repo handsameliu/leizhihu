@@ -1,3 +1,5 @@
+'use strict';
+
 const message = (err, result, message) => {
     const msg = {
         error_code: 0,

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>index</title>
+		<link href="../css/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link href="../css/flat-ui.min.css" rel="stylesheet">
+		<link href="../css/write.css" rel="stylesheet">
+		<!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
+		<!--[if lt IE 9]>
+	      <script src="/js/vendor/html5shiv.js"></script>
+	      <script src="/js/vendor/respond.min.js"></script>
+	    <![endif]-->
+	</head>
+
+	<body>
+		<div class="container">
+			<!--头部导航-->
+			<nav class="navbar navbar-default" role="navigation">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
+			      <span class="sr-only">Toggle navigation</span>
+			    </button>
+					<a class="navbar-brand" href="/">Quora</a>
+				</div>
+				<div class="collapse navbar-collapse" id="navbar-collapse-01">
+					<ul class="nav navbar-nav">
+						<li class="active">
+							<a href="/">首页</a>
+						</li>
+						<li>
+							<a href="/topic">话题</a>
+						</li>
+						<li>
+							<form class="navbar-form" action="#" role="search">
+								<div class="form-group">
+									<div class="input-group">
+										<input class="form-control" id="navbarInput-01" type="search" placeholder="搜索你感兴趣的内容">
+										<span class="input-group-btn">
+					            			<button type="submit" class="btn"><span class="fui-search"></span></button>
+										</span>
+									</div>
+								</div>
+							</form>
+						</li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown">
+							<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">个人中心 <b class="caret"></b></a>
+							<span class="dropdown-arrow"></span>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="/home">我的主页</a>
+								</li>
+								<li>
+									<a href="#">设置</a>
+								</li>
+								<li class="divider"></li>
+								<li>
+									<a href="javascript(0);" id="signOut">退出</a>
+								</li>
+							</ul>
+						</li>
+						<li>
+							<a>hkhjk</a>
+						</li>
+						<li>
+							<img src="" style="width:38px;height:38px;margin:8px;" />
+						</li>
+					</ul>
+				</div>
+				<!-- /.navbar-collapse -->
+			</nav>
+			<!--头部导航结束-->
+			<div class="row-fluid">
+                <div>
+                    <input id="title" type="text" class="title" placeholder="请输入标题"/>
+                </div>
+                <div id="editorBox"></div>
+			</div>
+            <div class="col-xs-12" style="padding-top:15px;">
+                <select id="selectTypes" class="form-control select select-primary select-block mbl" style="z-index:10000;">
+                    <option value="">文件分类</option>
+                </select>
+            </div> 
+            <div class="col-xs-12">
+                <a id="submitBtn" class="btn btn-primary btn-lg btn-block" href="javascript:void(0);" style="margin-top:1px;">提交</a>
+            </div>
+		</div>
+	</body>
+	<script src="../js/vendor/jquery.min.js"></script>
+	<script src="../js/flat-ui.min.js"></script>
+	<script src="../js/wangEditor.min.js"></script>
+    <script>
+        var typs = ['艺术','互联网','阅读','创业','翻译','法律','健康','游戏','时尚','历史','美食','生活','摄影','投资','心理学','旅行','设计','语言','汽车','科幻','文化','教育','自然科学','职业发展','体育','商业','生活方式','交互设计','文学','科技','儿童教育','物理学','绘画','足球','数据分析','经济学','食品安全','化学','户外运动','滑雪','博弈论','生物学','喜剧','戏剧','动漫','医学','编程思想','金融','区域经济学','编程','食品安全'];
+        $(document).ready(function() {
+            $("select").select2({dropdownCssClass: 'dropdown-inverse'});
+            var html = '';
+            for(var i=0;i<typs.length;i++){
+                html +='<option value="'+i+'">'+typs[i]+'</option>';
+            }
+            $('#selectTypes').html($('#selectTypes').html()+html);
+            var EDIT = window.wangEditor
+            var editor2 = new EDIT('#editorBox')
+            editor2.create();
+            $('#title').focus();
+            $('#editorBox .w-e-text-container').css('z-index',9998);
+            $('#submitBtn').bind('click',function(e){
+                e.stopPropagation();
+                var body = {};
+                body.title = $('#title').val();
+                body.content = editor2.txt.html();
+                body.subject = $('#selectTypes').val();
+                console.log(body);
+                if(!body.title){
+                    return alert('请填写标题!');
+                }else if(!body.content || body.content ==='<p><br></p>'){
+                    return alert('请填写文章内容!');
+                }else if(!body.subject){
+                    return alert('请选择文章所属类型!');
+                }
+                $.ajax({
+					type: 'POST',
+					url: '/api/saveArticle',
+					data: body,
+					dataType: 'json',
+					success: function(result){
+						if(result.error_code === -1){
+							if(result.message === "user invalid"){
+								alert('您尚未登录，请先登录!');
+								sessionStorage.setItem('writeArticle',JSON.stringify(body));
+								return window.location.href="/signIn";
+							}else if(result.message === 'params invalid'){
+								return alert('参数缺失.');
+							}
+						}else if(result.error_code === 0 && result.message === 'success'){
+							alert('发表成功!');
+						}
+					},
+					error:function(error){
+						console.log(error);
+						alert('发生错误，请稍后再试');
+					}
+				});
+            });
+			
+			var writeObj =sessionStorage.getItem('writeArticle');
+			if(writeObj){
+				writeObj = JSON.parse(writeObj);
+				if(writeObj.title){
+					$('#title').val(writeObj.title);
+				}
+				if(writeObj.selectTypes){
+					// $('#selectTypes').val(typs[writeObj.selectTypes]);
+					$("#selectTypes").find("option[value='"+writeObj.selectTypes+"']").attr("selected",true);
+				}
+				if(writeObj.content){
+					editor2.txt.html(writeObj.content);
+				}
+				sessionStorage.removeItem('writeArticle');
+			}
+        });
+        
+    </script>
+</html>
+
+
+

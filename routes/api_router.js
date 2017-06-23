@@ -13,5 +13,6 @@ router.get('/findBySubject/:id',articleController.findBySubject);				/*根据类
 router.get('/findArticleById/:id',articleController.findArticleById);		    /*根据id查询帖子及相关内容*/
 router.post('/saveArticle',articleController.saveArticle);						/*添加帖子*/
 router.post('/saveComment',articleController.saveComment);						/*添加评论*/
+router.get('/findCommentByArticleId/:id',articleController.findCommentByArticleId); /*查询对应评论 */
 
 module.exports = router;

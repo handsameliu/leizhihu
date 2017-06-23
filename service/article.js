@@ -1,4 +1,6 @@
-let db = require('../db');
+'use strict';
+
+let {db} = require('../db');
 let {message} = require('../helper');
 let articleService = db.Article;
 let commentService = db.Comment;
@@ -6,44 +8,44 @@ let commentService = db.Comment;
  * 查询所有
  */
 exports.findAll = (req,res) => {
-    articleService.find({isStatus:0}).exec((err,data) => {
+    articleService.find({isStatus:0}).populate('user').exec((err,data) => {
         if(err){
             return message('params invalid');
         }
         if(!data){
             return message('data is null');
         }
-        res.json(message(null,data,'success'));
+        res.json(message(null,{error_code:0,message:'success',result:data}));
     });
 };
 /**
  * 按话题分类查找
  */
 exports.findBySubject = (req,res) => {
-    let query = req.query;
-    articleService.find({subject:query.subject,isStatus:0}).exec((err,data) => {
+    let query = req.params;
+    articleService.find({subject:query.id,isStatus:0}).populate('user').exec((err,data) => {
         if(err){
             return message('params invalid');
         }
         if(!data){
             return message('data is null');
         }
-        res.json(message(null,data,'success'));
+        res.json(message(null,{error_code:0,message:'success',result:data}));
     });
 };
 /**
  * 按id查询帖子
  */
 exports.findArticleById = (req,res) => {
-    let query = req.query;
-    articleService.findOne({user:query.id,isStatus:0}).exec((err,data) => {
+    let query = req.params;
+    articleService.findOne({_id:query.id,isStatus:0}).populate('user').exec((err,data) => {
         if(err){
             return message('params invalid');
         }
         if(!data){
             return message('data is null');
         }
-        res.json(message(null,data,'success'));
+        res.json(message(null,{error_code:0,message:'success',result:data}));
     });
 };
 /**
@@ -51,7 +53,12 @@ exports.findArticleById = (req,res) => {
  */
 exports.saveArticle = (req,res) => {
     let body = req.body;
-    body.user = req.session.user && req.session.user._id;
+    let userId = req.session.user && req.session.user._id;
+    if(!userId){
+        return res.json(message('user invalid'));
+    }
+    body.user = userId;
+    console.log(body);
      if (!body || !(body.title && body.content && body.subject && body.user)) {
         res.json(message('params invalid'));
         return;
@@ -60,7 +67,7 @@ exports.saveArticle = (req,res) => {
         if(err){
             return res.json(message('error',err));
         }
-        res.json(message(null,data,'success'));
+        res.json(message(null,{error_code:0,message:'success',result:data}));
     });
 };
 /**
@@ -68,7 +75,12 @@ exports.saveArticle = (req,res) => {
  */
 exports.saveComment = (req,res) => {
     let body = req.body;
-    body.user = req.session.user && req.session.user._id;
+    let userId = req.session.user && req.session.user._id;
+    if(!userId){
+        return res.json(message('user invalid'));
+    }
+    body.user = userId;
+    console.log(body);
     if (!body || !(body.article && body.content && body.user)) {
         res.json(message('params invalid'));
         return;
@@ -77,6 +89,28 @@ exports.saveComment = (req,res) => {
         if(err){
             return res.json(message('error',err));
         }
-        res.json(message(null,data,'success'));
+        commentService.findById(data._id).populate('user').exec((err,result) => {
+            if(err){
+                res.json(message('params invalid'));
+                return;
+            }
+            res.json(message(null,{error_code:0,result:result,message:'success'}));
+        });
     });
+};
+/**
+ * 按文章id查询对应评论
+ */
+exports.findCommentByArticleId = (req,res) => {
+    let id = req.params.id;
+    if(!id){
+        res.json(message('params invalid'));
+        return ;
+    }
+    commentService.find({isStatus:0,article:id}).populate('user').exec((err,data) => {
+        if(err){
+            return res.json(message('error',err));
+        }
+        res.json(message(null,{message:'success',result:data}));
+    })
 };
