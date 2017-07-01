@@ -46,6 +46,7 @@
 	<script src="../js/vendor/jquery.min.js"></script>
 	<script type="text/javascript" src="../js/vendor/jquery.particleground.min.js"></script>
 	<script src="../js/flat-ui.min.js"></script>
+	<script src="../js/helper.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$('#particles').particleground({
@@ -76,9 +77,12 @@
 								alert('账号或密码错误，请重新输入.');
 							}
 						}else if(result.error_code === 0 && result.message === 'success'){
-							var writeObj =sessionStorage.getItem('writeArticle');
-							if(writeObj){
+							setCookie('username',body.username,1);
+							if(sessionStorage.getItem('writeArticle')){
 								return window.location.href = '/write';
+							}
+							if(sessionStorage.getItem('detailsWrite') && sessionStorage.getItem('detailsWriteId')){
+								return window.location.href='/details/'+sessionStorage.getItem('detailsWriteId');
 							}
 							if(body.username==='admin'){
 								window.location.href = '/admin';

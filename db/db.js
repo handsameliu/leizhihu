@@ -16,7 +16,8 @@ module.exports = ()=>{
 		email:{type:String,required: true},		/*邮箱*/
 		password:{type:String,required: true},	/*密码*/
 		username:{type:String,required: true},	/*用户名*/
-		isStatus:{type:Number,default:0}		/*状态  -1封禁，0正常，1超级管理员*/
+		isStatus:{type:Number,default:0},		/*状态  -1封禁，0正常，1超级管理员*/
+		createTime:{type:Date,default: Date.now}		/*时间*/
 	});
 	
 	let articleSchema = new mongoose.Schema({

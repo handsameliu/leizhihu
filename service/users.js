@@ -54,3 +54,36 @@ exports.signUp = (req,res) => {
         });
     });
 };
+
+/**
+ * 退出
+ */
+exports.signOut = (req,res) => {
+    req.session.user = null;  
+    res.json(message(null,{message:'success'}));
+};
+
+/**
+ * 搜索
+ */
+exports.searchUser = (req,res) => {
+    let val = req.body.val;
+    console.log('user',val);
+    userService.find({$or:[{username:new RegExp(val,'g')},{email:new RegExp(val,'g')}]}).exec((err,data) => {
+        if(err){
+            return message('params invalid');
+        }
+        res.json(message(null,{error_code:0,message:'success',result:data}));
+    });
+};
+
+exports.updateUser = (req,res) => {
+    let _id = req.body._id;
+    let val = req.body.val;  
+    userService.findByIdAndUpdate(_id,{$set:{isStatus:val}}).exec((err,data) => {
+        if(err){
+            return message('params invalid');
+        }
+        res.json(message(null,{error_code:0,message:'success',result:data}));
+    });
+};
