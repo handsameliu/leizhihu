@@ -1,6 +1,23 @@
 # leizhihu
 类知乎论坛，网站规划作业
 
+> 使用nodejs进行开发，前台使用flatUI进行搭建，使用jquery进行数据交互及页面dom的交互。
+> 后台使用express进行开发，使用mvc三层架构。使用mongoose数据库管理包对数据库进行操作。（由于是nosql类型数据库并无sql语句）
+> 数据库在实际开发过程中有过修改，只保留了基本的功能。目前有发帖及回复，登陆及注册，后台后屏蔽用户和帖子以及恢复用户和帖子的权限操作。
+
+> 启动方式：
+
+```
+    1. 安装nodejs以及mongodb数据库
+    2. 进入文件夹根目录后在命令行输入npm install 安装包依赖文件
+    3. 启动这个应用（MacOS 或 Linux 平台）：
+            DEBUG=myapp npm start
+       Windows 平台使用如下命令：
+            set DEBUG=myapp & npm start 
+    4. 然后在浏览器中打开 http://localhost:3000/  进入网址。
+    5. 进行注册  http://localhost:3000/signUp 
+```
+
 # 类知乎论坛需求文档
 
 **数据库设计**
@@ -8,7 +25,7 @@
 **后台界面设计**
 
 ## 数据库设计
-> 采用Access2013数据库，win10系统。
+> 采用nosql的mongodb数据库，在win10系统下开发。（需提前安装nodejs，mongodb数据库）
 
 ##### users  用户
 |字段|含义|
