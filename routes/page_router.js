@@ -5,7 +5,7 @@ const router = express.Router();
 
 const pageController = require("../controller/pageController.js");
 
-router.get('/',pageController.index); /*首页*/
+router.get('/',pageController.signIn); /*首页*/
 router.get('/index',pageController.index); /*首页*/
 router.get('/signIn',pageController.signIn); /*登陆*/
 router.get('/signUp',pageController.signUp); /*注册*/
