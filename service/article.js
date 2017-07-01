@@ -4,6 +4,7 @@ let {db} = require('../db');
 let {message} = require('../helper');
 let articleService = db.Article;
 let commentService = db.Comment;
+let {searchUser,updateUser} = require('./users');
 /**
  * 查询所有
  */
@@ -11,9 +12,6 @@ exports.findAll = (req,res) => {
     articleService.find({isStatus:0}).populate('user').exec((err,data) => {
         if(err){
             return message('params invalid');
-        }
-        if(!data){
-            return message('data is null');
         }
         res.json(message(null,{error_code:0,message:'success',result:data}));
     });
@@ -23,12 +21,12 @@ exports.findAll = (req,res) => {
  */
 exports.findBySubject = (req,res) => {
     let query = req.params;
+    if(!query.id || isNaN(query.id)){
+        return message('params invalid');
+    }
     articleService.find({subject:query.id,isStatus:0}).populate('user').exec((err,data) => {
         if(err){
             return message('params invalid');
-        }
-        if(!data){
-            return message('data is null');
         }
         res.json(message(null,{error_code:0,message:'success',result:data}));
     });
@@ -41,9 +39,6 @@ exports.findArticleById = (req,res) => {
     articleService.findOne({_id:query.id,isStatus:0}).populate('user').exec((err,data) => {
         if(err){
             return message('params invalid');
-        }
-        if(!data){
-            return message('data is null');
         }
         res.json(message(null,{error_code:0,message:'success',result:data}));
     });
@@ -58,7 +53,6 @@ exports.saveArticle = (req,res) => {
         return res.json(message('user invalid'));
     }
     body.user = userId;
-    console.log(body);
      if (!body || !(body.title && body.content && body.subject && body.user)) {
         res.json(message('params invalid'));
         return;
@@ -80,7 +74,6 @@ exports.saveComment = (req,res) => {
         return res.json(message('user invalid'));
     }
     body.user = userId;
-    console.log(body);
     if (!body || !(body.article && body.content && body.user)) {
         res.json(message('params invalid'));
         return;
@@ -114,3 +107,38 @@ exports.findCommentByArticleId = (req,res) => {
         res.json(message(null,{message:'success',result:data}));
     })
 };
+
+/**
+ * 搜索
+ */
+exports.search = (req,res) => {
+    let val = req.body.val;
+    console.log('--',val,new RegExp(val),req.body);
+    let type = req.body.type;
+    if(type==1){
+        return searchUser(req,res);
+    }else{
+        articleService.find({$or:[{content:new RegExp(val,'g')},{title:new RegExp(val,'g')}]}).populate('user').exec((err,data) => {
+            if(err){
+                return message('params invalid');
+            }
+            res.json(message(null,{error_code:0,message:'success',result:data}));
+        });
+    }
+}
+
+exports.update = (req,res) => {
+    let _id = req.body._id;
+    let val = req.body.val;
+    let type = req.body.type;
+    if(type==1){
+        return updateUser(req,res);
+    }else{
+        articleService.findByIdAndUpdate(_id,{$set:{isStatus:val}}).exec((err,data) => {
+            if(err){
+                return message('params invalid');
+            }
+            res.json(message(null,{error_code:0,message:'success',result:data}));
+        });
+    }
+}

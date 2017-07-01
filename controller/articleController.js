@@ -21,3 +21,9 @@ exports.saveComment = (req,res)=>{
 exports.findCommentByArticleId = (req,res)=>{
 	article.findCommentByArticleId(req,res);
 };
+exports.search = (req,res)=>{
+	article.search(req,res);
+};
+exports.update = (req,res)=>{
+	article.update(req,res);
+};
